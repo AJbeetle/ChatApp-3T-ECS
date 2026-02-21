@@ -1,10 +1,29 @@
 import { OrganizeImportsMode } from "typescript";
 import {WebSocketServer, WebSocket} from "ws"
+import dotenv from "dotenv";
+dotenv.config();
 
 
-const wss = new WebSocketServer({port : 8000})
+// Creating Redis Client
+import Redis from "ioredis";
+
+const redisHost = process.env.REDIS_HOST || "127.0.0.1";
+const redisPort = Number(process.env.REDIS_PORT) || 6379;
+
+const pub = new Redis(redisPort, redisHost);
+const sub = new Redis(redisPort, redisHost);
+
+
+if (!process.env.PORT) {
+  throw new Error("PORT is not defined in environment variables");
+}
+
+const wsPORT: number = parseInt(process.env.PORT, 10);
+
+const wss = new WebSocketServer({ port: wsPORT });
 
 let userCount = 0;
+
 // let sck:WebSocket[] = [];
 
 //now the socket should look something like this, use maps and Records here
@@ -15,27 +34,6 @@ let userCount = 0;
 } */
 
 let sck:Record<string, WebSocket[]> = {}; 
-
-// OR 
-
-// This is unoptimal approach : as searching and iterating through this is bit more exhausting
-// Array will look like this : 
-/* [
-    {socket : socket1, room: 'room1'},
-    {socket : socket2, room: 'room2'},
-    {socket : socket3, room: 'room3'},
-    {socket : socket4, room: 'room4'},
-] */
-
-
-/* interface User {
-    socket : WebSocket;
-    room : string;
-}
-
-let sck:User[] = []; */
-
-// Using Record Approach where we use Objects
 
 interface userMessage {
     type : string,
