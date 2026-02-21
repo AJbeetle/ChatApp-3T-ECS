@@ -1,6 +1,8 @@
 import { OrganizeImportsMode } from "typescript";
 import {WebSocketServer, WebSocket} from "ws"
 import dotenv from "dotenv";
+import crypto from "crypto";
+
 dotenv.config();
 
 
@@ -47,7 +49,12 @@ sub.on("message", (channel, message) => {
     
   if (!sockets) return;
     
+  // skipping the sender in subscriber handler
   sockets.forEach((socket) => {
+    const socketConnectionId = (socket as any).connectionId;
+  
+    if (socketConnectionId === data.senderConnectionId) return;
+  
     socket.send(data.message);
   });
 });
@@ -64,6 +71,11 @@ interface userMessage {
 }
 
 wss.on("connection",function(socket){
+    
+    const connectionId = crypto.randomUUID();
+    // attach metadata to socket
+    (socket as any).connectionId = connectionId;
+
     socket.send("WebSocket connection established");
     socket.on("message",async (event)=>{
         //event here now is stringified JSON object, having types now check if user wants to chat or join the room
@@ -109,11 +121,13 @@ wss.on("connection",function(socket){
             const {roomId, message} = userMessage.payload;
             if (!message) return;
 
+            // Redis message contains sender identity.
             await pub.publish(
               roomId,
               JSON.stringify({
                 roomId,
-                message
+                message,
+                senderConnectionId: (socket as any).connectionId
               })
             );
         }
