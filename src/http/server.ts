@@ -1,10 +1,7 @@
 import express from "express";
-import { getMessages } from "./repos/messageRepo";
-import dotenv from "dotenv";
-dotenv.config();
+import { getMessages } from "../repos/messageRepo";
 
-
-const app = express();
+export const app = express();
 
 app.get("/rooms/:roomId/messages", async (req, res) => {
   try {
@@ -14,9 +11,4 @@ app.get("/rooms/:roomId/messages", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "failed to fetch messages" });
   }
-});
-
-
-app.listen(process.env.PORT_HTTP, () => {
-  console.log("HTTP server running");
 });
