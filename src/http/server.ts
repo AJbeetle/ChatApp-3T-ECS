@@ -1,7 +1,9 @@
 import express from "express";
 import { getMessages } from "../repos/messageRepo";
+import cors from "cors";
 
 export const app = express();
+app.use(cors({ origin: "*" })); 
 
 app.get("/rooms/:roomId/messages", async (req, res) => {
   try {

@@ -1,1 +1,1 @@
-{"root":["./src/db.ts","./src/index.ts","./src/http/server.ts","./src/repos/messageRepo.ts","./src/ws/wsServer.ts"],"version":"5.8.3"}
+{"root":["./src/db.ts","./src/index.ts","./src/http/server.ts","./src/repos/messageRepo.ts","./src/ws/wsServer.ts"],"version":"5.9.3"}
