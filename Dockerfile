@@ -22,6 +22,8 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
+RUN apk add --no-cache ca-certificates
+
 # Copy only needed files from builder
 COPY --from=builder /app/package*.json ./
 RUN npm install --omit=dev
